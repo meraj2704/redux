@@ -26,11 +26,21 @@ const increment = "INCREMENT"
 const decrement = "DECREMENT"
 const reset = "RESET"
 const incrementByValue = "incrementByValue"
+const addUser = "ADD_USER"
 
 // state
 const initialState = {
   count :0
 }
+// initial user
+const users = [
+  {
+    id:1,
+    name:"Meraj Hossain",
+    email:"mh1669101@gmail.com",
+    phone:"01684088348"
+  }
+]
 
 // action
 const incrementCounterAction = ()=>{
@@ -53,6 +63,13 @@ const incrementByValueAction = (value)=>{
   return{
     type:incrementByValue,
     payload:value
+  }
+}
+// actions
+const addUserAction = (user) =>{
+  return{
+    type:addUser,
+    payload:user
   }
 }
 // reducer
@@ -100,3 +117,33 @@ store.dispatch(incrementCounterAction());
 store.dispatch(decrementCounterAction());
 store.dispatch(incrementByValueAction(10))
 store.dispatch(resetAction());
+
+
+
+
+// reducer
+const addUserReducer = (state=users,action) =>{
+  switch(action.type){
+    case addUser:
+      return [...state,action.payload]
+      
+    default:
+      return state;
+  }
+}
+
+// create store constants
+
+const store2 = createStore(addUserReducer);
+
+store2.subscribe(()=>{
+  console.log(store2.getState())
+})
+const newUser = {
+  id:2,
+  name:"Rahat Hossain",
+  email:"rahat@gmail.com",
+  phone:"01645-----"
+}
+
+store2.dispatch(addUserAction(newUser))
