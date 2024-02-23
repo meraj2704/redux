@@ -1,68 +1,89 @@
-const {createStore} = require("redux");
+// const {createStore} = require("redux");
 
-// declare the state
-// declare the constant
+const { createStore } = require("redux")
 
-const increment = "INCREMENT";
-const decrement = "DECREMENT";
-const addUser = "ADDUSER";
 
-// STATE
-const initialCounterState = {
-  count: 0,
-};
-const initialUserState = {
-  users: [{ name: "anisul islam" }],
-};
+
+
+
+/* 
+--------------plan---------------
+
+createstore requir from redux
+constants
+state - count : 0
+action - increment,decrement, reset
+reducer
+store
+see the situation of the states
+dispatch the action
+
+
+*/
+
+// constans
+const increment = "INCREMENT"
+const decrement = "DECREMENT"
+const reset = "RESET"
+
+// state
+const initialState = {
+  count :0
+}
 
 // action
-const incrementCounter = () => {
-  return {
-    type: increment,
-  };
-};
-const decrementCounter = () => {
-  return {
-    type: decrement,
-  };
-};
-const add_user = () => {
-  return {
-    type: addUser,
-    payload: { name: "shakil" },
-  };
-};
-
-// create reducer
-
-const counterReducer = (state = initialCounterState, action) => {
-  switch (action.type) {
-    case increment:
-      return {
-        ...state,
-        count: state.count + 1,
-      };
-    case decrement:
-      return {
-        ...state,
-        count: state.count - 1,
-      };
-    default:
-      state;
+const incrementCounterAction = ()=>{
+  return{
+    type:increment,
   }
-};
+}
+const decrementCounterAction = ()=>{
+  return{
+    type:decrement,
+  }
+}
+const resetAction = ()=>{
+  return{
+    type:reset,
+  }
+}
 
+// reducer
+const counterReducer = (state = initialState, action) =>{
+  switch(action.type){
+    case increment:
+      return{
+        ...state,
+        count: state.count + 1
+      }
+    case decrement:
+      return{
+        ...state,
+        count: state.count - 1
+      }
+    case reset:
+      return{
+        ...state,
+        count: 0,
+      }
+    default:
+     return state;
+  }
+}
 
-// store method
-//  getState(). dispatch(), subscribe()
+// store
 
-
-// create store
 const store = createStore(counterReducer);
 
-
+// set the state
 store.subscribe(()=>{
-  console.log(store.getState())
+  console.log(store.getState());
 })
 
-store.dispatch(incrementCounter())
+// dispatch the action
+
+store.dispatch(incrementCounterAction());
+store.dispatch(incrementCounterAction());
+store.dispatch(incrementCounterAction());
+store.dispatch(decrementCounterAction());
+store.dispatch(resetAction());
