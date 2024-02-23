@@ -25,6 +25,7 @@ dispatch the action
 const increment = "INCREMENT"
 const decrement = "DECREMENT"
 const reset = "RESET"
+const incrementByValue = "incrementByValue"
 
 // state
 const initialState = {
@@ -48,6 +49,12 @@ const resetAction = ()=>{
   }
 }
 
+const incrementByValueAction = (value)=>{
+  return{
+    type:incrementByValue,
+    payload:value
+  }
+}
 // reducer
 const counterReducer = (state = initialState, action) =>{
   switch(action.type){
@@ -65,6 +72,11 @@ const counterReducer = (state = initialState, action) =>{
       return{
         ...state,
         count: 0,
+      }
+    case incrementByValue:
+      return{
+        ...state,
+        count: state.count + action.payload,
       }
     default:
      return state;
@@ -86,4 +98,5 @@ store.dispatch(incrementCounterAction());
 store.dispatch(incrementCounterAction());
 store.dispatch(incrementCounterAction());
 store.dispatch(decrementCounterAction());
+store.dispatch(incrementByValueAction(10))
 store.dispatch(resetAction());
