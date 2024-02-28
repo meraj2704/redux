@@ -2,6 +2,7 @@
 
 const { createStore, combineReducers, applyMiddleware } = require("redux")
 const { default: logger } = require("redux-logger")
+const { thunk } = require("redux-thunk")
 
 
 
@@ -36,6 +37,10 @@ const addProducts = "ADD_PRODUCTS"
 // constant for carts
 const getCart = "GET_CART_ITEMS";
 const addCart = "ADD_TO_CART"
+// constant for fetch api
+const getTodoRequest = "GET_TO_REQUEST";
+const getTodoSuccess = "GET_TO_SUCCESS";
+const getTodoFailed = "GET_TO_FAILED";
 
 
 
@@ -65,6 +70,13 @@ const carts ={
   products:["Sugar"],
   numOfProducts : 1,
 }
+// todo state
+const todo = {
+  todos:[],
+  isLoaing:false,
+  error : null
+}
+
 
 
 
@@ -123,6 +135,24 @@ const addToCartAction = (product) =>{
   return{
     type:addCart,
     payload: product
+  }
+}
+// action for todo api
+const getTodoRequestAction = ()=>{
+  return{
+    type: getTodoRequest
+  }
+}
+const getTodoSuccessAction = (todos)=>{
+  return{
+    type: getTodoSuccess,
+    payload:todos
+  }
+}
+const getTodoFailedAction = (error)=>{
+  return{
+    type: getTodoFailed,
+    payload:error
   }
 }
 
@@ -205,6 +235,31 @@ const cartReducer = (state=carts,action)=>{
       return state;
   }
 }
+// todos reducer
+const todoReducer  = (state = todo,action)=>{
+  switch(action.type){
+    case getTodoRequest:
+      return{
+        ...state,
+        isLoaing:true
+      }
+    case getTodoSuccess:
+      return {
+        ...state,
+        isLoaing:false,
+        todos:action.payload
+      }
+    case getTodoFailed:
+      return{
+        ...state,
+        error:payload.error
+      }
+    default:
+      return state;
+  }
+}
+
+
 
 
 
@@ -215,7 +270,8 @@ const rootReducer = combineReducers({
   counterR : counterReducer,
   addUserR : addUserReducer,
   productsR : produtsReducer,
-  cartR:cartReducer
+  cartR:cartReducer,
+  todoR:todoReducer
 })
 
 
@@ -223,9 +279,31 @@ const rootReducer = combineReducers({
 
 
 
+//  ||------------------- fetch action --------------------||
+const fetchData = () =>{
+  return (dispatch) =>{
+    dispatch(getTodoRequestAction());
+    fetch("http://localhost:5000/services")
+    .then(res => res.json())
+    .then(data => {
+      const id = data.map((da) => da._id)
+      console.log(id)
+      dispatch(getTodoSuccessAction(id))
+    })
+    .catch((error) =>{
+      const message = error.message;
+      dispatch(getTodoFailedAction(message))
+    })
+  }
+}
+
+
+
+
+
 
 // ||---------------store------------------||
-const store = createStore(rootReducer,applyMiddleware(logger));
+const store = createStore(rootReducer,applyMiddleware(logger,thunk));
 
 
 
@@ -237,12 +315,6 @@ const store = createStore(rootReducer,applyMiddleware(logger));
 store.subscribe(()=>{
   console.log(store.getState());
 })
-// store2.subscribe(()=>{
-//   console.log(store2.getState())
-// })
-// productStore.subscribe(()=>{
-//   console.log(productStore.getState())
-// })
 
 
 
@@ -251,25 +323,27 @@ store.subscribe(()=>{
 
 // ||-----------------------dispatch the action------------------||
 
-store.dispatch(incrementCounterAction());
-store.dispatch(incrementCounterAction());
-store.dispatch(incrementCounterAction());
-store.dispatch(decrementCounterAction());
-store.dispatch(incrementByValueAction(10))
-store.dispatch(resetAction());
+// store.dispatch(incrementCounterAction());
+// store.dispatch(incrementCounterAction());
+// store.dispatch(incrementCounterAction());
+// store.dispatch(decrementCounterAction());
+// store.dispatch(incrementByValueAction(10))
+// store.dispatch(resetAction());
 
-const newUser = {
-  id:2,
-  name:"Rahat Hossain",
-  email:"rahat@gmail.com",
-  phone:"01645-----"
-}
-// dispatch adduser
-store.dispatch(addUserAction(newUser))
+// const newUser = {
+//   id:2,
+//   name:"Rahat Hossain",
+//   email:"rahat@gmail.com",
+//   phone:"01645-----"
+// }
+// // dispatch adduser
+// store.dispatch(addUserAction(newUser))
 
-// dispatch products
-store.dispatch(getProductsAction())
-store.dispatch(addProductAction("Milk"))
-// dispatch for cart  
-store.dispatch(getCatItemAction())
-store.dispatch(addToCartAction("Sugar"))
+// // dispatch products
+// store.dispatch(getProductsAction())
+// store.dispatch(addProductAction("Milk"))
+// // dispatch for cart  
+// store.dispatch(getCatItemAction())
+// store.dispatch(addToCartAction("Sugar"))
+// dispath api
+store.dispatch(fetchData())
