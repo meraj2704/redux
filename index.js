@@ -1,6 +1,6 @@
 // const {createStore} = require("redux");
 
-const { createStore } = require("redux")
+const { createStore, combineReducers } = require("redux")
 
 
 
@@ -31,6 +31,10 @@ const addUser = "ADD_USER"
 // constant for products
 const getProducts = "GET_PRODUCTS";
 const addProducts = "ADD_PRODUCTS"
+// constant for carts
+const getCart = "GET_CART_ITEMS";
+const addCart = "ADD_TO_CART"
+
 
 
 
@@ -53,6 +57,11 @@ const users = [
 const products ={
   products:["Sugar","Salt"],
   numOfProducts : 2,
+}
+// inital state for carts
+const carts ={
+  products:["Sugar"],
+  numOfProducts : 1,
 }
 
 
@@ -99,6 +108,18 @@ const getProductsAction = () =>{
 const addProductAction = (product) =>{
   return{
     type:addProducts,
+    payload: product
+  }
+}
+// action for getProduct
+const getCatItemAction = () =>{
+  return{
+    type:getCart
+  }
+}
+const addToCartAction = (product) =>{
+  return{
+    type:addCart,
     payload: product
   }
 }
@@ -166,8 +187,34 @@ const produtsReducer = (state=products,action)=>{
       return state;
   }
 }
+// reducer for products
+const cartReducer = (state=carts,action)=>{
+  switch(action.type){
+    case getCart:
+      return {
+        ...state
+      }
+    case addCart:
+      return{
+        products:[...state.products,action.payload],
+        numOfProducts:state.numOfProducts + 1
+      }
+    default:
+      return state;
+  }
+}
 
 
+
+
+
+// {---------------- -create root reducer --------------- }
+const rootReducer = combineReducers({
+  counterR : counterReducer,
+  addUserR : addUserReducer,
+  productsR : produtsReducer,
+  cartR:cartReducer
+})
 
 
 
@@ -176,12 +223,8 @@ const produtsReducer = (state=products,action)=>{
 
 
 // ||---------------store------------------||
-// store for count
-const store = createStore(counterReducer);
-// create store for user
-const store2 = createStore(addUserReducer);
-// crete store for products 
-const productStore = createStore(produtsReducer)
+const store = createStore(rootReducer);
+
 
 
 
@@ -192,12 +235,12 @@ const productStore = createStore(produtsReducer)
 store.subscribe(()=>{
   console.log(store.getState());
 })
-store2.subscribe(()=>{
-  console.log(store2.getState())
-})
-productStore.subscribe(()=>{
-  console.log(productStore.getState())
-})
+// store2.subscribe(()=>{
+//   console.log(store2.getState())
+// })
+// productStore.subscribe(()=>{
+//   console.log(productStore.getState())
+// })
 
 
 
@@ -220,9 +263,11 @@ const newUser = {
   phone:"01645-----"
 }
 // dispatch adduser
-store2.dispatch(addUserAction(newUser))
-store2.dispatch(addUserAction(newUser))
+store.dispatch(addUserAction(newUser))
 
 // dispatch products
-productStore.dispatch(getProductsAction())
-productStore.dispatch(addProductAction("Milk"))
+store.dispatch(getProductsAction())
+store.dispatch(addProductAction("Milk"))
+// dispatch for cart 
+store.dispatch(getCatItemAction())
+store.dispatch(addToCartAction("Sugar"))
