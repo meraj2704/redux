@@ -1,6 +1,7 @@
 // const {createStore} = require("redux");
 
-const { createStore, combineReducers } = require("redux")
+const { createStore, combineReducers, applyMiddleware } = require("redux")
+const { default: logger } = require("redux-logger")
 
 
 
@@ -9,17 +10,18 @@ const { createStore, combineReducers } = require("redux")
 /* 
 --------------plan---------------
 
-createstore requir from redux
-constants
-state - count : 0
-action - increment,decrement, reset
-reducer
-store
-see the situation of the states
-dispatch the action
-
+1. declare all constants
+2. declare the initial state
+3. declare all actions
+4. reducer
+5. create store constants 
+6. dispatch the actions with store
 
 */
+
+
+
+
 
 // ||-------------------------constans---------------------||
 
@@ -223,7 +225,7 @@ const rootReducer = combineReducers({
 
 
 // ||---------------store------------------||
-const store = createStore(rootReducer);
+const store = createStore(rootReducer,applyMiddleware(logger));
 
 
 
@@ -268,6 +270,6 @@ store.dispatch(addUserAction(newUser))
 // dispatch products
 store.dispatch(getProductsAction())
 store.dispatch(addProductAction("Milk"))
-// dispatch for cart 
+// dispatch for cart  
 store.dispatch(getCatItemAction())
 store.dispatch(addToCartAction("Sugar"))
