@@ -21,14 +21,22 @@ dispatch the action
 
 */
 
-// constans
+// ||-------------------------constans---------------------||
+
 const increment = "INCREMENT"
 const decrement = "DECREMENT"
 const reset = "RESET"
 const incrementByValue = "incrementByValue"
 const addUser = "ADD_USER"
+// constant for products
+const getProducts = "GET_PRODUCTS";
+const addProducts = "ADD_PRODUCTS"
 
-// state
+
+
+
+
+// ||-------------------------state---------------------||
 const initialState = {
   count :0
 }
@@ -41,8 +49,18 @@ const users = [
     phone:"01684088348"
   }
 ]
+// inital state for products
+const products ={
+  products:["Sugar","Salt"],
+  numOfProducts : 2,
+}
 
-// action
+
+
+
+
+// ||-------------------------action----------------------||
+
 const incrementCounterAction = ()=>{
   return{
     type:increment,
@@ -65,14 +83,37 @@ const incrementByValueAction = (value)=>{
     payload:value
   }
 }
-// actions
+// actions for users
 const addUserAction = (user) =>{
   return{
     type:addUser,
     payload:user
   }
 }
-// reducer
+// action for getProduct
+const getProductsAction = () =>{
+  return{
+    type:getProducts
+  }
+}
+const addProductAction = (product) =>{
+  return{
+    type:addProducts,
+    payload: product
+  }
+}
+
+
+
+
+
+
+
+
+
+// ||-------------------------------reducer----------------------||
+
+// reducer for count
 const counterReducer = (state = initialState, action) =>{
   switch(action.type){
     case increment:
@@ -99,17 +140,71 @@ const counterReducer = (state = initialState, action) =>{
      return state;
   }
 }
+// reducer for users
+const addUserReducer = (state=users,action) =>{
+  switch(action.type){
+    case addUser:
+      return  [...state,action.payload]
+      
+    default:
+      return state;
+  }
+}
+// reducer for products
+const produtsReducer = (state=products,action)=>{
+  switch(action.type){
+    case getProducts:
+      return {
+        ...state
+      }
+    case addProducts:
+      return{
+        products:[...state.products,action.payload],
+        numOfProducts:state.numOfProducts + 1
+      }
+    default:
+      return state;
+  }
+}
 
-// store
 
+
+
+
+
+
+
+
+// ||---------------store------------------||
+// store for count
 const store = createStore(counterReducer);
+// create store for user
+const store2 = createStore(addUserReducer);
+// crete store for products 
+const productStore = createStore(produtsReducer)
 
-// set the state
+
+
+
+
+
+// ||------------------set the state---------------------||
 store.subscribe(()=>{
   console.log(store.getState());
 })
+store2.subscribe(()=>{
+  console.log(store2.getState())
+})
+productStore.subscribe(()=>{
+  console.log(productStore.getState())
+})
 
-// dispatch the action
+
+
+
+
+
+// ||-----------------------dispatch the action------------------||
 
 store.dispatch(incrementCounterAction());
 store.dispatch(incrementCounterAction());
@@ -118,32 +213,16 @@ store.dispatch(decrementCounterAction());
 store.dispatch(incrementByValueAction(10))
 store.dispatch(resetAction());
 
-
-
-
-// reducer
-const addUserReducer = (state=users,action) =>{
-  switch(action.type){
-    case addUser:
-      return [...state,action.payload]
-      
-    default:
-      return state;
-  }
-}
-
-// create store constants
-
-const store2 = createStore(addUserReducer);
-
-store2.subscribe(()=>{
-  console.log(store2.getState())
-})
 const newUser = {
   id:2,
   name:"Rahat Hossain",
   email:"rahat@gmail.com",
   phone:"01645-----"
 }
-
+// dispatch adduser
 store2.dispatch(addUserAction(newUser))
+store2.dispatch(addUserAction(newUser))
+
+// dispatch products
+productStore.dispatch(getProductsAction())
+productStore.dispatch(addProductAction("Milk"))
