@@ -106,6 +106,7 @@ const incrementByValueAction = (value)=>{
     payload:value
   }
 }
+
 // actions for users
 const addUserAction = (user) =>{
   return{
@@ -113,6 +114,7 @@ const addUserAction = (user) =>{
     payload:user
   }
 }
+
 // action for getProduct
 const getProductsAction = () =>{
   return{
@@ -125,6 +127,7 @@ const addProductAction = (product) =>{
     payload: product
   }
 }
+
 // action for getProduct
 const getCatItemAction = () =>{
   return{
@@ -137,6 +140,7 @@ const addToCartAction = (product) =>{
     payload: product
   }
 }
+
 // action for todo api
 const getTodoRequestAction = ()=>{
   return{
@@ -252,7 +256,7 @@ const todoReducer  = (state = todo,action)=>{
     case getTodoFailed:
       return{
         ...state,
-        error:payload.error
+        error:action.payload
       }
     default:
       return state;
@@ -283,14 +287,14 @@ const rootReducer = combineReducers({
 const fetchData = () =>{
   return (dispatch) =>{
     dispatch(getTodoRequestAction());
-    fetch("http://localhost:5000/services")
+    fetch("https://healthcare-2fif.onrender.com/users")
     .then(res => res.json())
     .then(data => {
       const id = data.map((da) => da._id)
       console.log(id)
       dispatch(getTodoSuccessAction(id))
     })
-    .catch((error) =>{
+    .catch((error) =>{ 
       const message = error.message;
       dispatch(getTodoFailedAction(message))
     })
